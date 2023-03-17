@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/feserr/pheme-user/controllers"
+	"github.com/feserr/pheme-backend/controllers"
 	"github.com/gofiber/fiber/v2"
 )
 

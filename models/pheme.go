@@ -59,6 +59,14 @@ func FetchAllPhemes(userID uint) (*[]Pheme, error) {
 		}
 	}
 
+	otherUsers := append(*friends, *followers...)
+	otherUsers = append(otherUsers, userID)
+	othersPhemes := &[]Pheme{}
+	allOthersPhemes := Db.Model(&Pheme{}).Order("created_at desc").Find(othersPhemes, "user_id not in ? and visibility >= ?", otherUsers, byte(PUBLIC))
+	if allOthersPhemes.Error == nil {
+		*phemes = append(*phemes, *othersPhemes...)
+	}
+
 	return phemes, nil
 }
 
@@ -93,7 +101,7 @@ func FetchPheme(phemeID uint, userID uint) (*Pheme, error) {
 // FetchPhemes returns the phemes if are visible to the user.
 func FetchPhemes(phemeID uint, userID uint, visibility byte) (*[]Pheme, error) {
 	phemes := &[]Pheme{}
-	thePhemes := Db.Model(&Pheme{}).Find(&phemes, "user_id = ? and visibility >= ?", phemeID, visibility)
+	thePhemes := Db.Model(&Pheme{}).Find(&phemes, "user_id = ? and visibility >= ?", phemeID, 0)
 	if thePhemes.Error != nil {
 		println(thePhemes.Error)
 		return phemes, thePhemes.Error
@@ -101,7 +109,7 @@ func FetchPhemes(phemeID uint, userID uint, visibility byte) (*[]Pheme, error) {
 
 	visiblePhemes := &[]Pheme{}
 	for _, pheme := range *phemes {
-		if pheme.CreatedBy == userID || pheme.UserID == userID {
+		if pheme.CreatedBy == userID || pheme.UserID == userID || pheme.Visibility >= visibility {
 			*visiblePhemes = append(*visiblePhemes, pheme)
 		}
 	}

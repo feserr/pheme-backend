@@ -3,7 +3,7 @@ package controllers
 import (
 	"time"
 
-	"github.com/feserr/pheme-user/models"
+	"github.com/feserr/pheme-backend/models"
 	"github.com/gofiber/fiber/v2"
 )
 

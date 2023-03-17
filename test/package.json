@@ -1,5 +1,5 @@
 {
-  "name": "pheme-user-test",
+  "name": "pheme-backend-test",
   "version": "1.0.0",
   "description": "Tests of Pheme user service",
   "directories": {
@@ -11,28 +11,28 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/feserr/pheme-user.git"
+    "url": "git+https://github.com/feserr/pheme-backend.git"
   },
   "author": "Elías Serrano",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/feserr/pheme-user/issues"
+    "url": "https://github.com/feserr/pheme-backend/issues"
   },
-  "homepage": "https://github.com/feserr/pheme-user#readme",
+  "homepage": "https://github.com/feserr/pheme-backend#readme",
   "devDependencies": {
-    "@babel/preset-env": "^7.19.4",
-    "@babel/preset-typescript": "^7.18.6",
-    "@jest/globals": "^29.2.1",
-    "@types/jest": "^29.1.2",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-typescript": "^7.21.0",
+    "@jest/globals": "^29.5.0",
+    "@types/jest": "^29.5.0",
     "@types/supertest": "^2.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
-    "@typescript-eslint/parser": "^5.40.1",
-    "eslint": "^8.26.0",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
-    "jest": "^29.2.0",
-    "supertest": "^6.3.0",
-    "ts-jest": "^29.0.3",
-    "typescript": "^4.8.4"
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.9.5"
   }
 }

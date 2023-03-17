@@ -4,7 +4,7 @@ import {
 import request from 'supertest';
 
 const authUrl = 'http://127.0.0.1:8000';
-const phemeUrl = 'http://127.0.0.1:8001';
+const phemeUrl = 'http://127.0.0.1:8000';
 let cookie = '';
 let userID = 0;
 
@@ -27,18 +27,18 @@ beforeAll(async () => {
   // Create user
   await request(authUrl)
     .post('/api/v1/auth/register')
-    .send({ name: 'test.pheme', email: 'test.pheme@test.com', password: 'test' });
+    .send({ username: 'test.pheme', email: 'test@pheme.com', password: 'test' });
 
   let response = await request(authUrl)
     .post('/api/v1/auth/login')
-    .send({ email: 'test.pheme@test.com', password: 'test' });
+    .send({ email: 'test@pheme.com', password: 'test' });
   cookie = response.get('Set-Cookie')[0];
 
   response = await request(authUrl)
     .get('/api/v1/auth/user')
     .set('Cookie', cookie);
   userID = response.body.id;
-});
+}, 20000);
 
 afterAll(async () => {
   await request(authUrl)

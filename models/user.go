@@ -6,6 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserVersion returns the current version of the user schema.
@@ -25,7 +26,7 @@ func init() {
 type User struct {
 	ID           uint      `json:"id"`
 	Version      uint      `json:"version" gorm:"not null"`
-	Name         string    `json:"username" gorm:"not null"`
+	UserName     string    `json:"username" gorm:"not null"`
 	Email        string    `json:"email" gorm:"unique;not null"`
 	Avatar       string    `json:"avatar"`
 	Password     []byte    `json:"-"  gorm:"not null"`
@@ -35,11 +36,33 @@ type User struct {
 	Friends      []User    `json:"-" gorm:"many2many:friendship;association_jointable_foreignkey:friend_id"`
 }
 
+// RegisterUser create a new user.
+func RegisterUser(username string, email string, avatar string, password string) (*User, error) {
+	currentTime := time.Now()
+	encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	user := &User{
+		Version:      UserVersion(),
+		UserName:     username,
+		Email:        email,
+		Avatar:       avatar,
+		Password:     encryptedPassword,
+		PasswordDate: currentTime,
+		CreatedAt:    currentTime,
+	}
+
+	if createdUser := Db.Create(&user); createdUser.Error != nil {
+		log.Println(createdUser.Error)
+		return user, createdUser.Error
+	}
+
+	return user, nil
+}
+
 // UserToUserPublicData convert a user to a data public user
 func UserToUserPublicData(user *User) *UserPublicData {
 	userPublicData := &UserPublicData{}
 	userPublicData.ID = user.ID
-	userPublicData.Name = user.Name
+	userPublicData.UserName = user.UserName
 	userPublicData.Avatar = user.Avatar
 	userPublicData.CreatedAt = user.CreatedAt
 
@@ -58,15 +81,26 @@ func UsersToUsersPublicData(users *[]User) *[]UserPublicData {
 	return usersPublicData
 }
 
+// GetUserByEmail Gets the user of the email.
+func GetUserByEmail(email string) (*User, error) {
+	user := &User{}
+	if loggedUser := Db.Where("email = ?", email).First(&user); loggedUser.Error != nil {
+		log.Println(loggedUser.Error)
+		return user, loggedUser.Error
+	}
+
+	return user, nil
+}
+
 // GetUser returns the logged user.
-func GetUser(c *fiber.Ctx, secretKey string) (User, error) {
+func GetUser(c *fiber.Ctx, secretKey string) (*User, error) {
 	cookie := c.Cookies("jwt")
 
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
 
-	var user User
+	user := &User{}
 	if err != nil {
 		return user, err
 	}
@@ -112,7 +146,7 @@ func FindByID(userID uint) (*User, error) {
 // FindByName returns the users that contains the name.
 func FindByName(userName string) (*[]User, error) {
 	users := &[]User{}
-	usersByName := Db.Model(&User{}).Order("created_at desc").Find(&users, "name LIKE ?", "%"+userName+"%")
+	usersByName := Db.Model(&User{}).Where("UPPER(user_name) LIKE UPPER(?)", "%"+userName+"%").Order("created_at desc").Find(&users)
 	if usersByName.Error != nil {
 		println(usersByName.Error)
 		return users, usersByName.Error
@@ -157,13 +191,28 @@ func GetFriends(userID uint) (*[]uint, error) {
 // GetFollowers returns the followers of a user.
 func GetFollowers(userID uint) (*[]uint, error) {
 	followers := &[]uint{}
-	allFollowers := Db.Table("followship").Select("follower_id").Find(&followers, "user_id = ?", userID)
+	allFollowers := Db.Table("followship").Select("user_id").Find(&followers, "follower_id = ?", userID)
 	if allFollowers.Error != nil {
 		println(allFollowers.Error)
 		return followers, allFollowers.Error
 	}
 
 	return followers, nil
+}
+
+// GetFollowings returns the users following of a user.
+func GetFollowings(userID uint) (*[]User, error) {
+	user := User{}
+	Db.Preload("Followers").First(&user, "id = ?", userID)
+
+	followings := &[]User{}
+	allFollowingsError := Db.Model(&user).Association("Followers").Find(&followings)
+	if allFollowingsError != nil {
+		println(allFollowingsError)
+		return followings, allFollowingsError
+	}
+
+	return followings, nil
 }
 
 // AddFriend adds a friends to a user.

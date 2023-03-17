@@ -55,4 +55,4 @@ Please add them to the [Issue Tracker][issues] with as much info as possible, es
   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[issues]: https://github.com/feserr/pheme-user/issues
+[issues]: https://github.com/feserr/pheme-backend/issues

@@ -13,31 +13,24 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        go-version: [1.19]
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Checkout auth service
-        uses: actions/checkout@v3
-        with:
-          repository: feserr/pheme-auth
-          path: ./auth
-
       - name: Start containers
         run: docker-compose --env-file .env -f "./ci/stack.yml" up -d --build
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
           cache: 'npm'
           cache-dependency-path: test/package-lock.json
 
-      - name: Set up Go ${{ matrix.go-version }}
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: '1.20'
 
       - name: Verify dependencies
         run: go mod verify

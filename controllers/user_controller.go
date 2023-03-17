@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/feserr/pheme-user/models"
+	"github.com/feserr/pheme-backend/models"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -93,7 +93,7 @@ func GetUsersByName(c *fiber.Ctx) error {
 		})
 	}
 
-	users, err := models.FindByName(paramsName.Name)
+	users, err := models.FindByName(paramsName.UserName)
 	if err != nil {
 		c.Status(fiber.StatusNoContent)
 		return c.JSON(fiber.Map{
@@ -161,11 +161,43 @@ func GetFollowers(c *fiber.Ctx) error {
 	if err != nil {
 		c.Status(fiber.StatusNoContent)
 		return c.JSON(fiber.Map{
-			"message": "Failed to get the friends",
+			"message": "Failed to get the followers",
 		})
 	}
 
 	return c.JSON(followers)
+}
+
+// GetFollowings godoc
+// @Summary      Retrieve the following users
+// @Description  get the following users
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        name path      id  true  "User ID"
+// @Success      200  {object}  models.User
+// @Failure      400  {object}  models.Message
+// @Failure      401  {object}  models.Message
+// @Router       /user/following/{id} [get]
+func GetFollowings(c *fiber.Ctx) error {
+	var paramsName models.UserParamsID
+	err := c.ParamsParser(&paramsName)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": "Wrong parameters",
+		})
+	}
+
+	followings, err := models.GetFollowings(paramsName.ID)
+	if err != nil {
+		c.Status(fiber.StatusNoContent)
+		return c.JSON(fiber.Map{
+			"message": "Failed to get the followings",
+		})
+	}
+
+	return c.JSON(followings)
 }
 
 // AddFriend godoc

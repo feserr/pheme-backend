@@ -6,7 +6,7 @@ import request from 'supertest';
 jest.setTimeout(10000);
 
 const authUrl = 'http://127.0.0.1:8000';
-const phemeUrl = 'http://127.0.0.1:8001';
+const phemeUrl = 'http://127.0.0.1:8000';
 
 class User {
   id: number = 0;
@@ -26,7 +26,7 @@ async function createUser(userName: string): Promise<User> {
   // Create user
   await request(authUrl)
     .post('/api/v1/auth/register')
-    .send({ name: `${userName}`, email: `${userName}@user.com`, password: 'test' });
+    .send({ username: `${userName}`, email: `${userName}@user.com`, password: 'test' });
 
   let response = await request(authUrl)
     .post('/api/v1/auth/login')
@@ -62,7 +62,7 @@ let testUser: User = new User(0, '', '');
 
 beforeAll(async () => {
   testUser = await createUser('test.user');
-});
+}, 20000);
 
 afterAll(async () => {
   await deleteUser(testUser);
