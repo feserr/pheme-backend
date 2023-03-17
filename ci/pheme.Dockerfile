@@ -1,5 +1,5 @@
 # Builder
-FROM golang:1.19-buster AS builder
+FROM golang:1.20-buster AS builder
 
 ARG VERSION=dev
 
@@ -15,7 +15,7 @@ FROM debian:buster-slim
 
 COPY --from=builder /go/src/app/main /go/bin/main
 ENV PATH="/go/bin:${PATH}"
-ARG SERVER_PORT=8001
+ARG SERVER_PORT=8000
 EXPOSE ${SERVER_PORT}
 
-CMD ["main"]
+CMD ["main", "local"]

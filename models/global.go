@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/feserr/pheme-user/database"
+	"github.com/feserr/pheme-backend/database"
 )
 
 // Db global db var

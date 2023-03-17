@@ -6,7 +6,7 @@ import request from 'supertest';
 jest.setTimeout(10000);
 
 const authUrl = 'http://127.0.0.1:8000';
-const phemeUrl = 'http://127.0.0.1:8001';
+const phemeUrl = 'http://127.0.0.1:8000';
 
 class User {
   id: number = 0;
@@ -26,7 +26,7 @@ async function createUser(userName: string): Promise<User> {
   // Create user
   await request(authUrl)
     .post('/api/v1/auth/register')
-    .send({ name: `${userName}`, email: `${userName}@user.com`, password: 'test' });
+    .send({ username: `${userName}`, email: `${userName}@user.com`, password: 'test' });
 
   let response = await request(authUrl)
     .post('/api/v1/auth/login')
@@ -58,26 +58,11 @@ async function deleteFollower(userA: User, userB: User) {
     .set('Cookie', userA.cookie);
 }
 
-async function postPheme(user: User): Promise<number> {
-  const response = await request(phemeUrl)
-    .post('/api/v1/pheme')
-    .send({
-      visibility: 0, category: 'main', text: 'Hello world!', id: user.id,
-    })
-    .set('Cookie', user.cookie);
-
-  expect(response.statusCode).toBe(200);
-  expect(response.headers['content-type']).toContain('application/json');
-  expect(response.body).toHaveProperty('id');
-
-  return response.body.id;
-}
-
 let testUser: User = new User(0, '', '');
 
 beforeAll(async () => {
   testUser = await createUser('test.user');
-});
+}, 20000);
 
 afterAll(async () => {
   await deleteUser(testUser);
@@ -106,18 +91,19 @@ describe('GetUser endpoint', () => {
     expect(response.body).toHaveLength(0);
   });
 
-  it('Search single user', async () => {
+  it('Search by ID', async () => {
     const response = await request(phemeUrl)
-      .get(`/api/v1/user/${testUser.userName}`);
+      .get(`/api/v1/user/${testUser.id}`);
 
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toContain('application/json');
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0]).toHaveProperty('id');
-    expect(response.body[0]).toHaveProperty('userName');
+    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('username');
+    expect(response.body).toHaveProperty('avatar');
+    expect(response.body).toHaveProperty('createdAt');
   });
 
-  it('Search multiples users', async () => {
+  it('Search by username', async () => {
     const name = 'aname';
     const numUsers = 3;
     const users: Array<User> = [];
@@ -136,7 +122,9 @@ describe('GetUser endpoint', () => {
 
     response.body.forEach((user: Object) => {
       expect(user).toHaveProperty('id');
-      expect(user).toHaveProperty('userName');
+      expect(user).toHaveProperty('username');
+      expect(user).toHaveProperty('avatar');
+      expect(user).toHaveProperty('createdAt');
     });
 
     await Promise.all(users.map(async (user) => {

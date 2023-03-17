@@ -1,14 +1,16 @@
-module github.com/feserr/pheme-user
+module github.com/feserr/pheme-backend
 
 go 1.19
 
 require (
+	github.com/aws/aws-lambda-go v1.37.0
+	github.com/awslabs/aws-lambda-go-api-proxy v0.13.3
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/feserr/pheme-auth v0.0.0-20221219141510-c84d0649fff5
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/swaggo/fiber-swagger v1.3.0
 	github.com/swaggo/swag v1.8.9
+	golang.org/x/crypto v0.4.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.2
 )
@@ -46,10 +48,10 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.43.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/crypto v0.4.0 // indirect
 	golang.org/x/net v0.4.0 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/tools v0.4.0 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
