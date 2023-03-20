@@ -136,7 +136,7 @@ describe('GetUser endpoint', () => {
 describe('Friend endpoint', () => {
   it('Wrong user', async () => {
     const response = await request(phemeUrl)
-      .put(`/api/v1/user/friend/${testUser.id + 1}`)
+      .put('/api/v1/user/friend/-1')
       .set('Cookie', testUser.cookie);
 
     expect(response.statusCode).toBe(400);
@@ -180,7 +180,7 @@ describe('Friend endpoint', () => {
 describe('Follower endpoint', () => {
   it('Wrong user', async () => {
     const response = await request(phemeUrl)
-      .put(`/api/v1/user/follower/${testUser.id + 1}`)
+      .put('/api/v1/user/follower/-1')
       .set('Cookie', testUser.cookie);
 
     expect(response.statusCode).toBe(400);

@@ -3,20 +3,20 @@ version: '3.9'
 services:
   pheme-db:
     container_name: pheme-db-container
-    image: postgres:14.5
+    image: mysql:8.0.32
     restart: always
     volumes:
-      - pheme:/var/lib/postgresql/data
+      - pheme:/var/lib/mysql
     ports:
-      - 5432:5432
+      - 3306:3306
     networks:
       - pheme-network
     environment:
       - DATABASE_HOST=${DATABASE_HOST}
       - DATABASE_PORT=${DATABASE_PORT}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_DB=${DATABASE_DB}
 
   pheme-backend:
     container_name: pheme-backend-container
@@ -33,9 +33,9 @@ services:
     environment:
       - DATABASE_HOST=${DATABASE_HOST}
       - DATABASE_PORT=${DATABASE_PORT}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_DB=${DATABASE_DB}
       - PHEME_HOST=${PHEME_HOST}
       - PHEME_PORT=${PHEME_PORT}
     build:
